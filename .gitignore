@@ -1,0 +1,16 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# environment files
+.env*
+
+# Mock repo git directory (initialized by setup.sh)
+data/mock_repo/.git/

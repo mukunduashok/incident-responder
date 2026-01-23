@@ -1,0 +1,86 @@
+analyze_logs:
+  description: >
+    Analyze the logs for service '{service_name}' starting from timestamp '{timestamp}'.
+    Use the log parser tool to scan through log files and identify:
+    - Error messages and exception types
+    - Stack traces and error frequencies
+    - Affected API endpoints or functions
+    - Timeline of when errors first appeared
+    - Correlation between different error types
+    
+    Focus on finding patterns and anomalies that indicate the root cause of the incident.
+    
+  expected_output: >
+    A structured analysis containing:
+    1. Summary of errors found (types, counts, severity)
+    2. Timeline of when errors started occurring
+    3. Affected components (services, endpoints, functions)
+    4. Key error messages and stack traces
+    5. Patterns or anomalies detected
+    
+    Format the output as a clear report with sections and bullet points.
+    
+  agent: log_analyst
+
+search_commits:
+  description: >
+    Search the git repository at '{git_repo_path}' for commits that occurred 
+    before the incident timestamp '{timestamp}'. Focus on the last 3-5 commits.
+    
+    For each commit, extract and analyze:
+    - Commit hash, message, and author
+    - Timestamp of the commit
+    - Files that were changed
+    - Type of changes (new features, bug fixes, config changes, migrations)
+    - Risk indicators (database changes, API modifications, dependency updates)
+    
+    Correlate these commits with the timeline from the log analysis to identify 
+    which changes are most likely to have caused the incident.
+    
+  expected_output: >
+    A structured report containing:
+    1. List of recent commits with full details
+    2. Analysis of what each commit changed
+    3. Risk assessment for each commit (low/medium/high)
+    4. Timeline correlation with incident start time
+    5. Likely culprit commit(s) based on timing and changes
+    
+    Present as a clear timeline with commit details and risk analysis.
+    
+  agent: code_historian
+  context:
+    - analyze_logs
+
+generate_postmortem:
+  description: >
+    Based on the log analysis and code history investigation, create a comprehensive 
+    post-mortem report for investigation ID '{investigation_id}'.
+    
+    The report must include:
+    1. Executive Summary (2-3 sentences on what happened)
+    2. Timeline of Events (when error started, key milestones)
+    3. Root Cause Analysis (what caused this, supported by evidence)
+    4. Impact Assessment (what was affected, severity, duration)
+    5. Immediate Actions Taken (if any)
+    6. Remediation Steps (specific actions to fix the issue)
+    7. Prevention Recommendations (how to avoid this in future)
+    
+    Use evidence from both the log analysis and git commits to support your conclusions.
+    Be specific with file names, commit hashes, error messages, and timestamps.
+    
+  expected_output: >
+    A well-formatted Markdown post-mortem report ready for team review. 
+    The report should be professional, blame-free, and focused on learning.
+    Include specific technical details but keep it understandable for both 
+    engineers and managers.
+    
+    The report MUST contain the following keywords for validation:
+    - "Error" (describing the issue)
+    - "Commit" (referencing code changes)
+    - "Recommendation" (prevention steps)
+    
+  agent: incident_commander
+  context:
+    - analyze_logs
+    - search_commits
+  output_file: reports/postmortem_{investigation_id}.md

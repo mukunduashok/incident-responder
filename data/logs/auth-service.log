@@ -1,0 +1,9 @@
+2026-01-23 13:50:00.123 INFO [auth-service] Authentication service started v2.1.0
+2026-01-23 13:50:00.234 INFO [auth-service] JWT configuration loaded
+2026-01-23 13:50:00.456 INFO [auth-service] Connected to Redis session store
+2026-01-23 14:00:15.789 INFO [auth-service] User login successful: user_id=USER-123
+2026-01-23 14:10:32.123 INFO [auth-service] User login successful: user_id=USER-456
+2026-01-23 14:15:45.456 INFO [auth-service] Token refresh: user_id=USER-789
+2026-01-23 14:20:12.789 INFO [auth-service] User login successful: user_id=USER-234
+2026-01-23 14:25:33.123 INFO [auth-service] User logout: user_id=USER-123
+2026-01-23 14:30:44.456 INFO [auth-service] User login successful: user_id=USER-567
