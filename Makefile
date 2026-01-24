@@ -1,4 +1,4 @@
-.PHONY: help install run format lint check test clean
+.PHONY: help install run format lint check test clean secretscan
 
 help:
 	@echo "Available commands:"
@@ -9,6 +9,7 @@ help:
 	@echo "  make check      - Run format and lint checks"
 	@echo "  make test       - Run tests with pytest"
 	@echo "  make clean      - Remove cache and temporary files"
+	@echo "  make secretscan - Scan for secrets using trufflehog"
 
 install:
 	uv sync --all-extras
@@ -34,3 +35,6 @@ clean:
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 	find . -type d -name ".ruff_cache" -exec rm -rf {} +
+
+secretscan:
+	trufflehog git file://.
