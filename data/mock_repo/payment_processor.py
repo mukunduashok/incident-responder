@@ -1,27 +1,29 @@
 """Payment processing service."""
 
-import psycopg2
 from datetime import datetime
+
+import psycopg2
 
 
 class PaymentProcessor:
     """Handles payment transactions."""
-    
+
     def __init__(self, db_config):
         self.db_config = db_config
         self.db_pool = self._create_pool()
-    
+
     def _create_pool(self):
         """Create database connection pool."""
         return psycopg2.pool.SimpleConnectionPool(
-            1, 10,
-            host=self.db_config['host'],
-            port=self.db_config['port'],
-            database=self.db_config['database'],
-            user=self.db_config['user'],
-            password=self.db_config['password']
+            1,
+            10,
+            host=self.db_config["host"],
+            port=self.db_config["port"],
+            database=self.db_config["database"],
+            user=self.db_config["user"],
+            password=self.db_config["password"],
         )
-    
+
     def process_payment(self, transaction_id, amount, user_id):
         """Process a payment transaction."""
         conn = self.db_pool.getconn()
@@ -32,10 +34,31 @@ class PaymentProcessor:
                 VALUES (%s, %s, %s, 'pending', %s)
             """
             # Added timeout parameter
-            cursor.execute(query, (transaction_id, amount, user_id, datetime.now()), timeout=5)
+            cursor.execute(
+                query, (transaction_id, amount, user_id, datetime.now()), timeout=5
+            )
             conn.commit()
-            return {'status': 'success', 'transaction_id': transaction_id}
-        except Exception as e:
+            return {"status": "success", "transaction_id": transaction_id}
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            self.db_pool.putconn(conn)
+
+    def refund(self, transaction_id):
+        """Refund a payment transaction."""
+        conn = self.db_pool.getconn()
+        try:
+            cursor = conn.cursor()
+            query = """
+                UPDATE payments
+                SET status = 'refunded', updated_at = %s
+                WHERE transaction_id = %s
+            """
+            cursor.execute(query, (datetime.now(), transaction_id))
+            conn.commit()
+            return {"status": "refunded", "transaction_id": transaction_id}
+        except Exception:
             conn.rollback()
             raise
         finally:

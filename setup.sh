@@ -26,12 +26,7 @@ fi
 # Initialize mock repo with git
 echo "📁 Setting up mock repository..."
 if [ ! -d "data/mock_repo/.git" ]; then
-    cd data/mock_repo
-    git init
-    git add .
-    git commit -m "Initial commit: Mock application code"
-    cd ../..
-    echo "✅ Mock repository initialized with git history"
+    bash scripts/init_mock_repo.sh
 else
     echo "✅ Mock repository already initialized"
 fi

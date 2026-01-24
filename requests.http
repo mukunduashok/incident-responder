@@ -1,0 +1,16 @@
+### Trigger Investigation (capture response)
+# @name triggerInvestigation
+POST http://localhost:8000/api/v1/trigger-investigation
+Content-Type: application/json
+
+{
+    "service_name": "payment-service",
+    "alert_type": "database_timeout",
+    "timestamp": "2026-01-23T14:23:45.123"
+}
+
+### Get Investigation Status (use captured ID)
+GET http://localhost:8000/api/v1/investigation/{{triggerInvestigation.response.body.investigation_id}}
+
+### Health Check
+GET http://localhost:8000/api/v1/health

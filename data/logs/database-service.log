@@ -1,0 +1,13 @@
+2026-01-23 08:00:00.000 INFO [database-service] PostgreSQL 14.5 starting on port 5432
+2026-01-23 08:00:01.234 INFO [database-service] Database cluster initialized
+2026-01-23 08:00:02.567 INFO [database-service] Accepting connections
+2026-01-23 14:22:30.123 WARN [database-service] Connection pool utilization: 85%
+2026-01-23 14:22:45.456 WARN [database-service] Connection pool utilization: 92%
+2026-01-23 14:23:00.789 CRITICAL [database-service] Connection pool exhausted: max_connections=100 reached
+2026-01-23 14:23:15.123 ERROR [database-service] Failed to allocate connection: too many clients
+2026-01-23 14:23:30.456 ERROR [database-service] Query timeout: statement took 32000ms
+2026-01-23 14:23:45.789 ERROR [database-service] Deadlock detected on table payments
+2026-01-23 14:24:00.123 WARN [database-service] Rolling back transaction: lock timeout
+2026-01-23 14:24:30.456 INFO [database-service] Connections released: 45 idle connections closed
+2026-01-23 14:25:00.789 INFO [database-service] Connection pool usage: 40%
+2026-01-23 14:25:30.123 INFO [database-service] System stable: avg query time 15ms

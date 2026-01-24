@@ -14,3 +14,6 @@ wheels/
 
 # Mock repo git directory (initialized by setup.sh)
 data/mock_repo/.git/
+
+# Ignore report files
+reports/*.md

@@ -32,3 +32,4 @@
 2026-01-23 14:25:02.789 INFO [payment-service] Circuit breaker reset
 2026-01-23 14:25:05.123 INFO [payment-service] Processing payment request: transaction_id=TX-00130
 2026-01-23 14:25:05.456 INFO [payment-service] Payment completed: TX-00130, amount=$89.99
+2026-01-23 14:23:45 ERROR DatabaseTimeout: Connection to postgres timed out after 30s

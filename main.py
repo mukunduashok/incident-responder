@@ -12,17 +12,17 @@ app = FastAPI(
     title="Incident Responder API",
     description="""
     Intelligent DevOps Incident Responder - Multi-Agent System
-    
+
     Automatically investigates production incidents by:
     1. Analyzing logs for error patterns
     2. Searching git commits for recent changes
     3. Generating comprehensive post-mortem reports
-    
+
     Built with CrewAI multi-agent orchestration.
     """,
     version="0.1.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # Add CORS middleware
@@ -49,8 +49,8 @@ async def root():
         "endpoints": {
             "health": "/api/v1/health",
             "trigger_investigation": "/api/v1/trigger-investigation",
-            "get_investigation": "/api/v1/investigation/{id}"
-        }
+            "get_investigation": "/api/v1/investigation/{id}",
+        },
     }
 
 
@@ -60,17 +60,11 @@ def main():
     print(f"📁 Log Directory: {Config.LOG_DIRECTORY}")
     print(f"📄 Reports Directory: {Config.REPORTS_DIRECTORY}")
     print(f"🔧 Git Repo Path: {Config.GIT_REPO_PATH}")
-    print(f"🤖 LLM Model: {Config.OLLAMA_MODEL}")
+    print(f"🤖 LLM Model: {Config.AZURE_DEPLOYMENT_NAME}")
     print(f"\n📚 API Documentation: http://{Config.API_HOST}:{Config.API_PORT}/docs")
-    
-    uvicorn.run(
-        app,
-        host=Config.API_HOST,
-        port=Config.API_PORT,
-        log_level="info"
-    )
+
+    uvicorn.run(app, host=Config.API_HOST, port=Config.API_PORT, log_level="info")
 
 
 if __name__ == "__main__":
     main()
-
