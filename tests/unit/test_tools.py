@@ -6,7 +6,6 @@ from unittest.mock import patch
 
 from src.incident_responder.constants import (
     DEFAULT_MAX_COMMITS,
-    GIT_SHORT_HASH_LENGTH,
     LOG_FILE_EXTENSION,
     MAX_ERROR_MESSAGE_LENGTH,
     MAX_FILES_TO_DISPLAY,
@@ -236,6 +235,7 @@ class TestGitSearchTool:
         assert "file1.py" in output
         assert "file2.py" in output
         assert "more" not in output.lower()
+
 
 class TestReportGeneratorTool:
     """Unit tests for ReportGeneratorTool."""

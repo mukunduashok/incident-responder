@@ -10,7 +10,7 @@ Per the technical requirements:
 def validate_report_content(content: str) -> tuple[bool, list[str]]:
     """
     Validate that report content contains required keywords.
-    
+
     Returns:
         tuple: (is_valid, list of missing keywords)
     """
@@ -19,12 +19,12 @@ def validate_report_content(content: str) -> tuple[bool, list[str]]:
         "Commit": ["Commit", "commit", "COMMIT"],
         "Recommendation": ["Recommendation", "recommendation", "RECOMMENDATION"],
     }
-    
+
     missing = []
     for category, variations in required_keywords.items():
         if not any(keyword in content for keyword in variations):
             missing.append(category)
-    
+
     return len(missing) == 0, missing
 
 

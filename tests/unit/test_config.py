@@ -1,17 +1,9 @@
 """Unit tests for configuration module."""
 
-import os
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
-from src.incident_responder.constants import (
-    DEFAULT_API_HOST,
-    DEFAULT_API_PORT,
-    DEFAULT_AZURE_API_VERSION,
-    DEFAULT_AZURE_DEPLOYMENT_NAME,
-)
 from src.incident_responder.utils.config import Config
 
 
