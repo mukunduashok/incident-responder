@@ -1,4 +1,4 @@
-### Trigger Investigation (capture response)
+### Trigger Investigation - Payment Service (Database Timeout)
 # @name triggerInvestigation
 POST http://localhost:8000/api/v1/trigger-investigation
 Content-Type: application/json
@@ -9,8 +9,120 @@ Content-Type: application/json
     "timestamp": "2026-01-23T14:23:45.123"
 }
 
-### Get Investigation Status (use captured ID)
+###
+
+### Trigger Investigation - Payment Service (NullPointerException)
+# @name triggerPaymentNPE
+POST http://localhost:8000/api/v1/trigger-investigation
+Content-Type: application/json
+
+{
+    "service_name": "payment-service",
+    "alert_type": "null_pointer_exception",
+    "timestamp": "2026-01-23T14:23:45.456"
+}
+
+###
+
+### Trigger Investigation - Database Service (Connection Pool Exhausted)
+# @name triggerDatabasePoolExhausted
+POST http://localhost:8000/api/v1/trigger-investigation
+Content-Type: application/json
+
+{
+    "service_name": "database-service",
+    "alert_type": "connection_pool_exhausted",
+    "timestamp": "2026-01-23T14:23:00.789"
+}
+
+###
+
+### Trigger Investigation - Database Service (Deadlock Detected)
+# @name triggerDatabaseDeadlock
+POST http://localhost:8000/api/v1/trigger-investigation
+Content-Type: application/json
+
+{
+    "service_name": "database-service",
+    "alert_type": "deadlock_detected",
+    "timestamp": "2026-01-23T14:23:45.789"
+}
+
+###
+
+### Trigger Investigation - Database Service (Query Timeout)
+# @name triggerDatabaseQueryTimeout
+POST http://localhost:8000/api/v1/trigger-investigation
+Content-Type: application/json
+
+{
+    "service_name": "database-service",
+    "alert_type": "query_timeout",
+    "timestamp": "2026-01-23T14:23:30.456"
+}
+
+###
+
+### Trigger Investigation - Auth Service (Redis Connection Lost)
+# @name triggerAuthRedisDown
+POST http://localhost:8000/api/v1/trigger-investigation
+Content-Type: application/json
+
+{
+    "service_name": "auth-service",
+    "alert_type": "redis_connection_lost",
+    "timestamp": "2026-01-23T14:21:30.000"
+}
+
+###
+
+### Trigger Investigation - Auth Service (High Database Latency)
+# @name triggerAuthHighLatency
+POST http://localhost:8000/api/v1/trigger-investigation
+Content-Type: application/json
+
+{
+    "service_name": "auth-service",
+    "alert_type": "high_database_latency",
+    "timestamp": "2026-01-23T14:22:00.000"
+}
+
+###
+
+### Get Investigation Status - Payment Service (Database Timeout)
 GET http://localhost:8000/api/v1/investigation/{{triggerInvestigation.response.body.investigation_id}}
+
+###
+
+### Get Investigation Status - Payment Service (NullPointerException)
+GET http://localhost:8000/api/v1/investigation/{{triggerPaymentNPE.response.body.investigation_id}}
+
+###
+
+### Get Investigation Status - Database Service (Connection Pool Exhausted)
+GET http://localhost:8000/api/v1/investigation/{{triggerDatabasePoolExhausted.response.body.investigation_id}}
+
+###
+
+### Get Investigation Status - Database Service (Deadlock Detected)
+GET http://localhost:8000/api/v1/investigation/{{triggerDatabaseDeadlock.response.body.investigation_id}}
+
+###
+
+### Get Investigation Status - Database Service (Query Timeout)
+GET http://localhost:8000/api/v1/investigation/{{triggerDatabaseQueryTimeout.response.body.investigation_id}}
+
+###
+
+### Get Investigation Status - Auth Service (Redis Connection Lost)
+GET http://localhost:8000/api/v1/investigation/{{triggerAuthRedisDown.response.body.investigation_id}}
+
+###
+
+### Get Investigation Status - Auth Service (High Database Latency)
+GET http://localhost:8000/api/v1/investigation/{{triggerAuthHighLatency.response.body.investigation_id}}
+
+###
 
 ### Health Check
 GET http://localhost:8000/api/v1/health

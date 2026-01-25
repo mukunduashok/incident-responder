@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 
 from ..crew import IncidentResponderCrew
 from ..utils.config import Config
@@ -50,7 +50,9 @@ def run_investigation(investigation_id: str, inputs: dict):
     summary="Trigger incident investigation",
     description="Starts a multi-agent investigation of a production incident",
 )
-async def trigger_investigation(request: InvestigationRequest):
+async def trigger_investigation(
+    request: InvestigationRequest, background_tasks: BackgroundTasks
+):
     """
     Trigger an incident investigation.
 
@@ -87,7 +89,7 @@ async def trigger_investigation(request: InvestigationRequest):
     }
 
     # Run investigation as a background task (fire and forget)
-    run_investigation(investigation_id, inputs)
+    background_tasks.add_task(run_investigation, investigation_id, inputs)
 
     return InvestigationResponse(
         investigation_id=investigation_id,

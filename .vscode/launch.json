@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "FastAPI: Debug Server",
+            "name": "Py Server",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/main.py",
@@ -17,7 +17,7 @@
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "FastAPI: Debug with Uvicorn",
+            "name": "Uvicorn Server",
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
