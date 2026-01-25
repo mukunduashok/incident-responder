@@ -3,6 +3,7 @@
 from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
+from ..constants import LOG_FILE_EXTENSION, MAX_ERROR_MESSAGE_LENGTH
 from ..utils.config import Config
 from ..utils.log_utils import extract_errors_from_logs
 
@@ -48,7 +49,7 @@ class LogParserTool(BaseTool):
         """
         try:
             # Find log file for the service
-            log_file = Config.LOG_DIRECTORY / f"{service_name}.log"
+            log_file = Config.LOG_DIRECTORY / f"{service_name}{LOG_FILE_EXTENSION}"
 
             if not log_file.exists():
                 return f"Error: Log file not found for service '{service_name}' at {log_file}"
@@ -61,26 +62,48 @@ class LogParserTool(BaseTool):
             analysis = extract_errors_from_logs(log_content)
 
             # Format output
-            output = [
-                f"=== Log Analysis for {service_name} ===\n",
-                f"Analysis Period: Starting from {timestamp}",
-                f"Total Errors Found: {analysis['total_errors']}",
-                f"First Error Timestamp: {analysis['first_error_timestamp']}",
-                f"\nAffected Services: {', '.join(analysis['affected_services'])}",
-                "\nError Types Distribution:",
-            ]
+            output = self._format_analysis_output(service_name, timestamp, analysis)
 
-            for error_type, count in analysis["error_types"].items():
-                output.append(f"  - {error_type}: {count} occurrences")
-
-            output.append("\nSample Error Messages (first 10):")
-            for idx, error in enumerate(analysis["sample_errors"], 1):
-                output.append(
-                    f"\n{idx}. [{error.timestamp}] {error.level} - {error.service}"
-                )
-                output.append(f"   {error.message[:200]}...")  # Truncate long messages
-
-            return "\n".join(output)
+            return output
 
         except Exception as e:
             return f"Error parsing logs: {str(e)}"
+
+    def _format_analysis_output(
+        self, service_name: str, timestamp: str, analysis: dict
+    ) -> str:
+        """
+        Format log analysis output.
+
+        Args:
+            service_name: Name of the service
+            timestamp: Starting timestamp for analysis
+            analysis: Analysis results dictionary
+
+        Returns:
+            Formatted string output
+        """
+        output = [
+            f"=== Log Analysis for {service_name} ===\n",
+            f"Analysis Period: Starting from {timestamp}",
+            f"Total Errors Found: {analysis['total_errors']}",
+            f"First Error Timestamp: {analysis['first_error_timestamp']}",
+            f"\nAffected Services: {', '.join(analysis['affected_services'])}",
+            "\nError Types Distribution:",
+        ]
+
+        for error_type, count in analysis["error_types"].items():
+            output.append(f"  - {error_type}: {count} occurrences")
+
+        output.append("\nSample Error Messages (first 10):")
+        for idx, error in enumerate(analysis["sample_errors"], 1):
+            output.append(
+                f"\n{idx}. [{error.timestamp}] {error.level} - {error.service}"
+            )
+            # Truncate long messages
+            truncated_message = error.message[:MAX_ERROR_MESSAGE_LENGTH]
+            if len(error.message) > MAX_ERROR_MESSAGE_LENGTH:
+                truncated_message += "..."
+            output.append(f"   {truncated_message}")
+
+        return "\n".join(output)

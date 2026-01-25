@@ -9,17 +9,17 @@ class InvestigationRequest(BaseModel):
     service_name: str = Field(
         ...,
         description="Name of the service to investigate (e.g., 'payment-service')",
-        example="payment-service",
+        json_schema_extra={"example": "payment-service"},
     )
     alert_type: str = Field(
         ...,
         description="Type of alert that triggered the investigation",
-        example="database_timeout",
+        json_schema_extra={"example": "database_timeout"},
     )
     timestamp: str | None = Field(
         default=None,
         description="Timestamp when the incident occurred (ISO format). Defaults to now.",
-        example="2026-01-23T14:23:45.123",
+        json_schema_extra={"example": "2026-01-23T14:23:45.123"},
     )
 
 

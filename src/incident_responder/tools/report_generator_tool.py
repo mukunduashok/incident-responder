@@ -5,6 +5,12 @@ from datetime import datetime
 from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
+from ..constants import (
+    REPORT_FILENAME_EXTENSION,
+    REPORT_FILENAME_PREFIX,
+    REPORT_METADATA_SEPARATOR,
+    REPORT_TIMESTAMP_FORMAT,
+)
 from ..utils.config import Config
 
 
@@ -48,18 +54,12 @@ class ReportGeneratorTool(BaseTool):
             # Ensure reports directory exists
             Config.REPORTS_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
-            # Create filename
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"postmortem_{investigation_id}_{timestamp}.md"
+            # Create filename with timestamp
+            filename = self._generate_filename(investigation_id)
             report_path = Config.REPORTS_DIRECTORY / filename
 
             # Add metadata header to report
-            header = f"""---
-Investigation ID: {investigation_id}
-Generated: {datetime.now().isoformat()}
----
-
-"""
+            header = self._generate_metadata_header(investigation_id)
             full_content = header + content
 
             # Save report
@@ -70,3 +70,33 @@ Generated: {datetime.now().isoformat()}
 
         except Exception as e:
             return f"Error generating report: {str(e)}"
+
+    def _generate_filename(self, investigation_id: str) -> str:
+        """
+        Generate report filename with timestamp.
+
+        Args:
+            investigation_id: Unique investigation identifier
+
+        Returns:
+            Formatted filename
+        """
+        timestamp = datetime.now().strftime(REPORT_TIMESTAMP_FORMAT)
+        return f"{REPORT_FILENAME_PREFIX}_{investigation_id}_{timestamp}{REPORT_FILENAME_EXTENSION}"
+
+    def _generate_metadata_header(self, investigation_id: str) -> str:
+        """
+        Generate metadata header for the report.
+
+        Args:
+            investigation_id: Unique investigation identifier
+
+        Returns:
+            Formatted metadata header
+        """
+        return f"""{REPORT_METADATA_SEPARATOR}
+Investigation ID: {investigation_id}
+Generated: {datetime.now().isoformat()}
+{REPORT_METADATA_SEPARATOR}
+
+"""

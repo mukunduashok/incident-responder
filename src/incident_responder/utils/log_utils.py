@@ -3,6 +3,23 @@
 import re
 from dataclasses import dataclass
 
+from ..constants import (
+    ERROR_CATEGORY_DATABASE,
+    ERROR_CATEGORY_GENERAL,
+    ERROR_CATEGORY_HTTP,
+    ERROR_CATEGORY_NULL_POINTER,
+    ERROR_CATEGORY_STACK_TRACE,
+    ERROR_LEVELS,
+    LOG_LEVEL_CRITICAL,
+    LOG_LEVEL_DEBUG,
+    LOG_LEVEL_ERROR,
+    LOG_LEVEL_FATAL,
+    LOG_LEVEL_INFO,
+    LOG_LEVEL_WARN,
+    LOG_LEVEL_WARNING,
+    MAX_SAMPLE_ERRORS,
+)
+
 
 @dataclass
 class LogEntry:
@@ -20,8 +37,9 @@ class LogPatterns:
 
     # Standard log format: 2026-01-23 14:23:45.123 ERROR [service-name] message
     STANDARD_LOG = re.compile(
-        r"(?P<timestamp>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}(?:\.\d+)?)\s+"
-        r"(?P<level>DEBUG|INFO|WARN|WARNING|ERROR|CRITICAL|FATAL)\s+"
+        rf"(?P<timestamp>\d{{4}}-\d{{2}}-\d{{2}}\s+\d{{2}}:\d{{2}}:\d{{2}}(?:\.\d+)?)\s+"
+        rf"(?P<level>{LOG_LEVEL_DEBUG}|{LOG_LEVEL_INFO}|{LOG_LEVEL_WARN}|"
+        rf"{LOG_LEVEL_WARNING}|{LOG_LEVEL_ERROR}|{LOG_LEVEL_CRITICAL}|{LOG_LEVEL_FATAL})\s+"
         r"\[(?P<service>[^\]]+)\]\s+"
         r"(?P<message>.*)"
     )
@@ -72,16 +90,16 @@ def categorize_error(message: str) -> list[str]:
     categories = []
 
     if LogPatterns.DATABASE_ERROR.search(message):
-        categories.append("Database")
+        categories.append(ERROR_CATEGORY_DATABASE)
     if LogPatterns.HTTP_ERROR.search(message):
-        categories.append("HTTP/Network")
+        categories.append(ERROR_CATEGORY_HTTP)
     if LogPatterns.NULL_POINTER.search(message):
-        categories.append("NullPointer/Attribute")
+        categories.append(ERROR_CATEGORY_NULL_POINTER)
     if LogPatterns.STACK_TRACE.search(message):
-        categories.append("Exception/StackTrace")
+        categories.append(ERROR_CATEGORY_STACK_TRACE)
 
     if not categories:
-        categories.append("General")
+        categories.append(ERROR_CATEGORY_GENERAL)
 
     return categories
 
@@ -96,7 +114,7 @@ def extract_errors_from_logs(log_content: str) -> dict:
 
     for line in lines:
         entry = parse_log_line(line)
-        if entry and entry.level in ["ERROR", "CRITICAL", "FATAL"]:
+        if entry and entry.level in ERROR_LEVELS:
             errors.append(entry)
             affected_services.add(entry.service)
 
@@ -114,5 +132,5 @@ def extract_errors_from_logs(log_content: str) -> dict:
         "error_types": error_counts,
         "first_error_timestamp": first_error_time,
         "affected_services": list(affected_services),
-        "sample_errors": errors[:10],  # First 10 errors
+        "sample_errors": errors[:MAX_SAMPLE_ERRORS],
     }

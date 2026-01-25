@@ -5,51 +5,55 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.incident_responder.api.routes import router
+from src.incident_responder.constants import (
+    API_DESCRIPTION,
+    API_PREFIX,
+    API_TAGS,
+    API_TITLE,
+    API_VERSION,
+    CORS_ALLOW_CREDENTIALS,
+    CORS_ALLOW_HEADERS,
+    CORS_ALLOW_METHODS,
+    CORS_ALLOW_ORIGINS,
+    DOCS_URL,
+    REDOC_URL,
+)
 from src.incident_responder.utils.config import Config
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Incident Responder API",
-    description="""
-    Intelligent DevOps Incident Responder - Multi-Agent System
-
-    Automatically investigates production incidents by:
-    1. Analyzing logs for error patterns
-    2. Searching git commits for recent changes
-    3. Generating comprehensive post-mortem reports
-
-    Built with CrewAI multi-agent orchestration.
-    """,
-    version="0.1.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    title=API_TITLE,
+    description=API_DESCRIPTION,
+    version=API_VERSION,
+    docs_url=DOCS_URL,
+    redoc_url=REDOC_URL,
 )
 
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=CORS_ALLOW_ORIGINS,
+    allow_credentials=CORS_ALLOW_CREDENTIALS,
+    allow_methods=CORS_ALLOW_METHODS,
+    allow_headers=CORS_ALLOW_HEADERS,
 )
 
 # Include API routes
-app.include_router(router, prefix="/api/v1", tags=["investigations"])
+app.include_router(router, prefix=API_PREFIX, tags=API_TAGS)
 
 
 @app.get("/")
 async def root():
     """Root endpoint with API information."""
     return {
-        "name": "Incident Responder API",
-        "version": "0.1.0",
+        "name": API_TITLE,
+        "version": API_VERSION,
         "status": "running",
-        "docs": "/docs",
+        "docs": DOCS_URL,
         "endpoints": {
-            "health": "/api/v1/health",
-            "trigger_investigation": "/api/v1/trigger-investigation",
-            "get_investigation": "/api/v1/investigation/{id}",
+            "health": f"{API_PREFIX}/health",
+            "trigger_investigation": f"{API_PREFIX}/trigger-investigation",
+            "get_investigation": f"{API_PREFIX}/investigation/{{id}}",
         },
     }
 

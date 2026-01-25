@@ -3,6 +3,7 @@
 from crewai import LLM, Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 
+from .constants import LLM_TEMPERATURE
 from .tools import GitSearchTool, LogParserTool, ReportGeneratorTool
 from .utils.config import Config
 
@@ -28,7 +29,7 @@ class IncidentResponderCrew:
             api_key=Config.AZURE_API_KEY,
             api_base=Config.AZURE_API_BASE,
             api_version=Config.AZURE_API_VERSION,
-            temperature=0.3,
+            temperature=LLM_TEMPERATURE,
         )
 
     @agent
