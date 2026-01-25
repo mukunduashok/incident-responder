@@ -1,68 +1,103 @@
-"""Tests for report validation (as per requirements)."""
+"""Unit tests for report content validation (as per requirements).
 
-from src.incident_responder.utils.config import Config
+Per the technical requirements:
+- Report MUST contain "Error" (describing the issue)
+- Report MUST contain "Commit" (referencing code changes)
+- Report MUST contain "Recommendation" (prevention steps)
+"""
 
 
-class TestPostMortemReportValidation:
+def validate_report_content(content: str) -> tuple[bool, list[str]]:
     """
-    Test that generated post-mortem reports contain required keywords.
-
-    Per the technical requirements:
-    - Report MUST contain "Error" (describing the issue)
-    - Report MUST contain "Commit" (referencing code changes)
-    - Report MUST contain "Recommendation" (prevention steps)
+    Validate that report content contains required keywords.
+    
+    Returns:
+        tuple: (is_valid, list of missing keywords)
     """
+    required_keywords = {
+        "Error": ["Error", "error", "ERROR"],
+        "Commit": ["Commit", "commit", "COMMIT"],
+        "Recommendation": ["Recommendation", "recommendation", "RECOMMENDATION"],
+    }
+    
+    missing = []
+    for category, variations in required_keywords.items():
+        if not any(keyword in content for keyword in variations):
+            missing.append(category)
+    
+    return len(missing) == 0, missing
 
-    def test_report_contains_required_keywords(self):
-        """Test that generated reports contain Error, Commit, and Recommendation."""
-        # This test will need to wait for an actual report to be generated
-        # For now, we'll check if the reports directory exists and can be written to
 
-        Config.REPORTS_DIRECTORY.mkdir(parents=True, exist_ok=True)
-        assert Config.REPORTS_DIRECTORY.exists()
+class TestReportContentValidation:
+    """Unit tests for report validation logic."""
 
-        # Create a sample report for testing
-        sample_report = """
+    def test_validates_complete_report(self):
+        """Should validate a report with all required keywords."""
+        sample_content = """
 # Post-Mortem Report
 
-## Executive Summary
-Database connection timeout error occurred in payment-service.
+## Error Analysis
+Database connection timeout error occurred.
 
-## Timeline
-- 14:23:45 - First Error detected in logs
-
-## Root Cause Analysis
-The recent Commit 9f6d43b reduced database timeout from 30s to 5s.
+## Root Cause
+The recent Commit abc123 changed timeout settings.
 
 ## Recommendation
-1. Revert the timeout configuration change
-2. Add monitoring for database connection times
-3. Implement gradual rollout for config changes
+Revert the configuration change.
 """
+        is_valid, missing = validate_report_content(sample_content)
+        assert is_valid
+        assert len(missing) == 0
 
-        # Verify keywords are present
-        assert "Error" in sample_report
-        assert "Commit" in sample_report
-        assert "Recommendation" in sample_report
-
-    def test_sample_report_file_validation(self):
-        """Test validation logic on a sample report file."""
-        sample_content = """
-# Incident Post-Mortem
-
-## Error Analysis
-Connection timeout errors in payment processing.
-
-## Commit History
-Recent commits:
-- Commit abc123: Updated timeout config
-
-## Recommendations
-- Increase timeout values
-- Add circuit breaker
+    def test_detects_missing_error_keyword(self):
+        """Should detect when Error keyword is missing."""
+        content = """
+# Post-Mortem Report
+Commit abc123 was deployed.
+Recommendation: Add monitoring.
 """
-        # Validate required keywords
-        required_keywords = ["Error", "Commit", "Recommendation"]
+        is_valid, missing = validate_report_content(content)
+        assert not is_valid
+        assert "Error" in missing
 
-        for keyword in required_keywords:
-            assert keyword in sample_content, f"Missing required keyword: {keyword}"
+    def test_detects_missing_commit_keyword(self):
+        """Should detect when Commit keyword is missing."""
+        content = """
+# Post-Mortem Report
+Error: Database timeout.
+Recommendation: Add monitoring.
+"""
+        is_valid, missing = validate_report_content(content)
+        assert not is_valid
+        assert "Commit" in missing
+
+    def test_detects_missing_recommendation_keyword(self):
+        """Should detect when Recommendation keyword is missing."""
+        content = """
+# Post-Mortem Report
+Error: Database timeout.
+Commit abc123 was deployed.
+"""
+        is_valid, missing = validate_report_content(content)
+        assert not is_valid
+        assert "Recommendation" in missing
+
+    def test_accepts_case_variations(self):
+        """Should accept case variations of keywords."""
+        content = """
+error occurred
+commit abc123
+recommendation: fix it
+"""
+        is_valid, missing = validate_report_content(content)
+        assert is_valid
+
+    def test_detects_multiple_missing_keywords(self):
+        """Should detect multiple missing keywords."""
+        content = "Just some random text"
+        is_valid, missing = validate_report_content(content)
+        assert not is_valid
+        assert len(missing) == 3
+        assert "Error" in missing
+        assert "Commit" in missing
+        assert "Recommendation" in missing

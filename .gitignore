@@ -12,6 +12,12 @@ wheels/
 # environment files
 .env*
 
+# Test and coverage artifacts
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+
 # Mock repo git directory (initialized by setup.sh)
 data/mock_repo/.git/
 
