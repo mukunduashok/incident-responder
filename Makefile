@@ -1,4 +1,4 @@
-.PHONY: help install run format lint check test test-unit test-integration test-e2e test-coverage test-watch clean secretscan
+.PHONY: help install run format lint check test test-unit test-integration test-e2e test-coverage test-watch clean secretscan qdrant
 
 help:
 	@echo "Available commands:"
@@ -66,3 +66,6 @@ clean:
 
 secretscan:
 	trufflehog git file://.
+
+qdrant:
+	docker run -p 6333:6333 qdrant/qdrant
