@@ -17,3 +17,13 @@ Using **CrewAI**, you will define three distinct agents:
 * **Backend:** Wrap the CrewAI execution in a **FastAPI** endpoint (`/trigger-investigation`).
 * **Tools:** Write at least one **Custom Tool** for CrewAI. Don't just use built-in search; write a Python function that parses a local log file using Regex.
 * **Validation:** Use **Pytest** to write a test case that ensures the final report contains specific keywords (e.g., "Error", "Commit", "Recommendation").
+
+### Todo:
+- Use the embeddings from Qdrant to fetch relevant historical incidents and send them as context to the AI Agents
+- Make the package a bundle
+    - **Make the commit read process configurable:** Given the repository path from github and read permissions, the product should be able to read the commit history and start analysing the history. 
+    - **Make the log reader configurable to read from various sources:** Given the log source like Datadog, ELK, etc.., the product should be able to read the logs and start analysing the history.
+    - **Configure the date / date range:** Given the incident along with date range, the agent should read the logs in that date range to look for issues
+    - **Enable auth:** Put FastAPI behind a auth mechanism
+    - Write Dockerfile for the product to be bundled
+    - ... / Identify what else is needed for the product to be packaged

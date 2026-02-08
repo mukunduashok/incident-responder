@@ -68,4 +68,4 @@ secretscan:
 	trufflehog git file://.
 
 qdrant:
-	docker run -p 6333:6333 qdrant/qdrant
+	docker start qdrant-vector-db || docker run --name qdrant-vector-db -p 6333:6333 qdrant/qdrant
