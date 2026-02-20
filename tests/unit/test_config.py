@@ -10,12 +10,11 @@ from src.incident_responder.utils.config import Config
 class TestConfigClass:
     """Test Config class and its properties."""
 
-    def test_config_has_azure_settings(self):
-        """Config should have Azure OpenAI settings."""
-        assert hasattr(Config, "AZURE_API_KEY")
-        assert hasattr(Config, "AZURE_API_BASE")
-        assert hasattr(Config, "AZURE_API_VERSION")
-        assert hasattr(Config, "AZURE_DEPLOYMENT_NAME")
+    def test_config_has_ollama_settings(self):
+        """Config should have Ollama settings."""
+        assert hasattr(Config, "OLLAMA_MODEL")
+        assert hasattr(Config, "OLLAMA_BASE_URL")
+        assert hasattr(Config, "OLLAMA_API_KEY")
 
     def test_config_has_path_settings(self):
         """Config should have path settings."""

@@ -1,0 +1,37 @@
+[
+  {
+    "service_name": "payment-service",
+    "alert_type": "database_timeout",
+    "timestamp": "2026-01-23T14:23:45.123"
+  },
+  {
+    "service_name": "payment-service",
+    "alert_type": "null_pointer_exception",
+    "timestamp": "2026-01-23T14:23:45.456"
+  },
+  {
+    "service_name": "database-service",
+    "alert_type": "connection_pool_exhausted",
+    "timestamp": "2026-01-23T14:23:00.789"
+  },
+  {
+    "service_name": "database-service",
+    "alert_type": "deadlock_detected",
+    "timestamp": "2026-01-23T14:23:45.789"
+  },
+  {
+    "service_name": "database-service",
+    "alert_type": "query_timeout",
+    "timestamp": "2026-01-23T14:23:30.456"
+  },
+  {
+    "service_name": "auth-service",
+    "alert_type": "redis_connection_lost",
+    "timestamp": "2026-01-23T14:21:30.000"
+  },
+  {
+    "service_name": "auth-service",
+    "alert_type": "high_database_latency",
+    "timestamp": "2026-01-23T14:22:00.000"
+  }
+]

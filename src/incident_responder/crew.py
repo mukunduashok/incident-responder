@@ -23,13 +23,19 @@ class IncidentResponderCrew:
     tasks_config = "config/tasks.yaml"
 
     def _get_llm(self):
-        """Get LLM configuration for agents."""
+        """Get LLM configuration for agents (Ollama Cloud)."""
         return LLM(
-            model=f"azure_openai/{Config.AZURE_DEPLOYMENT_NAME}",
-            api_key=Config.AZURE_API_KEY,
-            api_base=Config.AZURE_API_BASE,
-            api_version=Config.AZURE_API_VERSION,
+            model=f"ollama/{Config.OLLAMA_MODEL}",
+            base_url=Config.OLLAMA_BASE_URL,
+            api_key=Config.OLLAMA_API_KEY or None,
             temperature=LLM_TEMPERATURE,
+        )
+
+    def _get_embedding_llm(self):
+        """Get embedding LLM configuration (local Ollama)."""
+        return LLM(
+            model=f"ollama/{Config.EMBEDDING_MODEL}",
+            base_url=Config.EMBEDDING_BASE_URL,
         )
 
     @agent
@@ -110,5 +116,6 @@ class IncidentResponderCrew:
             agents=self.agents,  # Automatically populated by @agent decorators
             tasks=self.tasks,  # Automatically populated by @task decorators
             process=Process.sequential,  # Tasks execute in order
+            # embedding_llm=self._get_embedding_llm(),  # Local Ollama for embeddings
             verbose=True,
         )

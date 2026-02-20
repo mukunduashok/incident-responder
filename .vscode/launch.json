@@ -10,11 +10,13 @@
             "request": "launch",
             "program": "${workspaceFolder}/main.py",
             "console": "integratedTerminal",
-            "justMyCode": false,
+            "justMyCode": true,
+            "subProcess": true,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
             },
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env"
         },
         {
             "name": "Uvicorn Server",
@@ -29,9 +31,13 @@
                 "8000",
                 "--reload"
             ],
-            "jinja": true,
-            "justMyCode": false,
+            "justMyCode": true,
+            "subProcess": true,
             "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
         }
     ]
 }

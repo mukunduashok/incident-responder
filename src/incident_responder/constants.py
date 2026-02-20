@@ -42,9 +42,16 @@ DEFAULT_API_PORT = "8000"
 # LLM Configuration
 # ============================================================================
 
-# Azure OpenAI Defaults
-DEFAULT_AZURE_API_VERSION = "2024-02-15-preview"
-DEFAULT_AZURE_DEPLOYMENT_NAME = "gpt-4"
+# Ollama Defaults
+DEFAULT_OLLAMA_MODEL = "minimax-m2.5:cloud"
+DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
+
+# Ollama Cloud (for main LLM agents)
+DEFAULT_OLLAMA_CLOUD_BASE_URL = "https://api.ollama.ai/v1"
+
+# Local Ollama (for embeddings)
+DEFAULT_EMBEDDING_MODEL = "embeddinggemma:latest"
+DEFAULT_EMBEDDING_BASE_URL = "http://localhost:11434"
 
 # LLM Parameters
 LLM_TEMPERATURE = 0.3  # Lower temperature for more deterministic outputs
@@ -163,10 +170,11 @@ HTTP_STATUS_INTERNAL_ERROR = 500
 # ============================================================================
 
 # Environment variable names
-ENV_AZURE_API_KEY = "AZURE_API_KEY"
-ENV_AZURE_API_BASE = "AZURE_API_BASE"
-ENV_AZURE_API_VERSION = "AZURE_API_VERSION"
-ENV_AZURE_DEPLOYMENT_NAME = "AZURE_DEPLOYMENT_NAME"
+ENV_OLLAMA_MODEL = "OLLAMA_MODEL"
+ENV_OLLAMA_BASE_URL = "OLLAMA_BASE_URL"
+ENV_OLLAMA_API_KEY = "OLLAMA_API_KEY"
+ENV_EMBEDDING_MODEL = "EMBEDDING_MODEL"
+ENV_EMBEDDING_BASE_URL = "EMBEDDING_BASE_URL"
 ENV_LOG_DIRECTORY = "LOG_DIRECTORY"
 ENV_REPORTS_DIRECTORY = "REPORTS_DIRECTORY"
 ENV_GIT_REPO_PATH = "GIT_REPO_PATH"

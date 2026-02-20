@@ -162,7 +162,7 @@ async def health_check():
     """
     return HealthResponse(
         status=STATUS_HEALTHY,
-        llm_configured=bool(Config.AZURE_DEPLOYMENT_NAME),
+        llm_configured=bool(Config.OLLAMA_MODEL),
         logs_available=Config.LOG_DIRECTORY.exists(),
         git_repo_available=(Config.GIT_REPO_PATH / GIT_DIRECTORY_NAME).exists(),
         timestamp=datetime.now().isoformat(),
