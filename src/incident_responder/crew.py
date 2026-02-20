@@ -27,7 +27,7 @@ class IncidentResponderCrew:
         return LLM(
             model=f"ollama/{Config.OLLAMA_MODEL}",
             base_url=Config.OLLAMA_BASE_URL,
-            api_key=Config.OLLAMA_API_KEY or None,
+            api_key=Config.OLLAMA_API_KEY,
             temperature=LLM_TEMPERATURE,
         )
 
