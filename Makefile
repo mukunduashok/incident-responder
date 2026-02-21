@@ -1,13 +1,12 @@
-.PHONY: help install run format lint check test test-unit test-integration test-e2e test-coverage test-watch clean secretscan qdrant
+.PHONY: help install run format check test test-unit test-integration test-e2e test-coverage test-watch clean secretscan qdrant
 
 help:
 	@echo "Available commands:"
 	@echo "  make install          - Install production dependencies"
 	@echo "  make install-dev      - Install all dependencies (production + dev + test)"
 	@echo "  make run              - Run the FastAPI application"
-	@echo "  make format           - Format code using ruff"
-	@echo "  make lint             - Lint code using ruff"
-	@echo "  make check            - Run format and lint checks"
+	@echo "  make format           - Format and fix code using ruff"
+	@echo "  make check            - Check code format and lint"
 	@echo "  make test             - Run all tests with coverage"
 	@echo "  make test-unit        - Run only unit tests"
 	@echo "  make test-integration - Run only integration tests"
@@ -30,11 +29,9 @@ format:
 	ruff format .
 	ruff check --fix .
 
-lint:
-	ruff check .
-
-check: lint
+check:
 	ruff format --check .
+	ruff check .
 
 test:
 	pytest -v --cov=src/incident_responder --cov-report=term-missing --cov-report=html
@@ -65,7 +62,14 @@ clean:
 	find . -type f -name "coverage.xml" -delete
 
 secretscan:
-	trufflehog git file://.
+	@if command -v trufflehog >/dev/null 2>&1; then \
+		trufflehog --no-update git file://.; \
+	elif command -v trufflehog.exe >/dev/null 2>&1; then \
+		trufflehog.exe --no-update git file://.; \
+	else \
+		echo "Error: trufflehog not found. Install with: choco install trufflehog"; \
+		exit 1; \
+	fi
 
 qdrant:
 	docker start qdrant-vector-db || docker run --name qdrant-vector-db -p 6333:6333 qdrant/qdrant
