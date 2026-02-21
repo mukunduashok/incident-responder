@@ -56,7 +56,11 @@ generate_postmortem:
     Based on the log analysis and code history investigation, create a comprehensive 
     post-mortem report for investigation ID '{investigation_id}'.
     
-    The report must include:
+    The report must include a metadata header at the top with:
+    - Investigation ID: {investigation_id}
+    - Generated: The current timestamp in ISO format
+    
+    Followed by these sections:
     1. Executive Summary (2-3 sentences on what happened)
     2. Timeline of Events (when error started, key milestones)
     3. Root Cause Analysis (what caused this, supported by evidence)
@@ -70,6 +74,11 @@ generate_postmortem:
     
   expected_output: >
     A well-formatted Markdown post-mortem report ready for team review. 
+    
+    IMPORTANT: Output ONLY the raw markdown content. Do NOT wrap the output in 
+    code blocks (do not use ```markdown or ```). The output should start directly 
+    with the markdown content (e.g., with the "---" metadata separator).
+    
     The report should be professional, blame-free, and focused on learning.
     Include specific technical details but keep it understandable for both 
     engineers and managers.

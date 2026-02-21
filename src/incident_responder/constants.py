@@ -152,10 +152,6 @@ MAX_ERROR_MESSAGE_LENGTH = 200
 # Report filename format
 REPORT_FILENAME_PREFIX = "postmortem"
 REPORT_FILENAME_EXTENSION = ".md"
-REPORT_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S"
-
-# Report sections
-REPORT_METADATA_SEPARATOR = "---"
 
 # ============================================================================
 # HTTP Status Codes

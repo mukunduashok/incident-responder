@@ -19,7 +19,6 @@ All requirements from the problem statement have been successfully implemented.
 - [x] **Custom Tools** - At least one custom tool with regex
   - LogParserTool (regex-based log parsing)
   - GitSearchTool (git commit analysis)
-  - ReportGeneratorTool (markdown report generation)
 
 - [x] **Pytest Validation** - Tests for required keywords
   - "Error" keyword validation
@@ -38,7 +37,7 @@ incident-responder/
 │   ├── tools/
 │   │   ├── log_parser_tool.py  ✅ Regex log parser
 │   │   ├── git_search_tool.py  ✅ Git search tool
-│   │   └── report_generator_tool.py ✅ Report tool
+│   │   └── report_generator_tool.py ✅ Removed (using CrewAI output_file)
 │   ├── api/
 │   │   ├── routes.py           ✅ FastAPI routes
 │   │   └── models.py           ✅ Pydantic models

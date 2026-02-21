@@ -4,7 +4,7 @@ from crewai import LLM, Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 
 from .constants import LLM_TEMPERATURE
-from .tools import GitSearchTool, LogParserTool, ReportGeneratorTool
+from .tools import GitSearchTool, LogParserTool
 from .utils.config import Config
 
 
@@ -77,7 +77,7 @@ class IncidentResponderCrew:
         return Agent(
             config=self.agents_config["incident_commander"],
             llm=self._get_llm(),
-            tools=[ReportGeneratorTool()],
+            tools=[],
         )
 
     @task
