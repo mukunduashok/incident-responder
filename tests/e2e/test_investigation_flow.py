@@ -96,6 +96,7 @@ class TestCompleteInvestigationFlow:
                 report_content = report_files[0].read_text()
                 assert len(report_content) > 0
 
+    @pytest.mark.timeout(600)  # 10 minute timeout for concurrent investigations test
     def test_concurrent_investigations(self):
         """Test concurrent investigations with various timestamp formats and edge cases."""
         # Test both concurrency AND timestamp format acceptance together

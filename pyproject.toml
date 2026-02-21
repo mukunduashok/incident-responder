@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 
 dependencies = [
-    "crewai[azure-ai-inference]>=1.8.1",
     "crewai-tools>=1.8.1",
     "litellm>=1.75.3",
     "email-validator>=2.0.0",

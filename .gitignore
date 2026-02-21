@@ -23,3 +23,6 @@ data/mock_repo/.git/
 
 # Ignore report files
 reports/*.md
+
+# Ignore agent specific files
+.claude/*
