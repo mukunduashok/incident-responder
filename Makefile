@@ -1,5 +1,9 @@
 .PHONY: help install run format check test test-unit test-integration test-e2e test-coverage test-watch clean secretscan qdrant
 
+# Load environment variables from .env file (cross-platform)
+-include .env
+export
+
 help:
 	@echo "Available commands:"
 	@echo "  make install          - Install production dependencies"
