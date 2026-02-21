@@ -9,7 +9,6 @@ import pytest
 from src.incident_responder.tools import (
     GitSearchTool,
     LogParserTool,
-    ReportGeneratorTool,
 )
 from src.incident_responder.utils.config import Config
 
@@ -122,137 +121,32 @@ def test_tool_negative_cases(tool_cls, args):
 
 
 @pytest.mark.parametrize(
-    "report_case",
-    [
-        {
-            "test_id": "integration-test-001",
-            "content": """
-# Post-Mortem Report
-
-## Summary
-Test incident in payment-service.
-
-## Timeline
-- 14:23:45 - Error detected
-
-## Root Cause
-Database timeout
-
-## Recommendations
-1. Increase timeout
-2. Add monitoring
-""",
-            "check_metadata": False,
-            "multiple": False,
-        },
-        {
-            "test_id": "integration-test-002",
-            "content": "# Simple Report",
-            "check_metadata": True,
-            "multiple": False,
-        },
-        {
-            "test_id": "integration-test-003",
-            "content": "# Report Content",
-            "check_metadata": False,
-            "multiple": True,
-        },
-    ],
-)
-def test_report_generator_integration(report_case):
-    """Clubbed test for ReportGeneratorTool: generate, metadata, multiple reports."""
-    tool = ReportGeneratorTool()
-    test_id = report_case["test_id"]
-    content = report_case["content"]
-    if report_case.get("multiple"):
-        result1 = tool._run(investigation_id=test_id, content=content)
-        assert "successfully" in result1.lower()
-        import time
-
-        time.sleep(1)
-        result2 = tool._run(investigation_id=test_id, content=content)
-        assert "successfully" in result2.lower()
-        report_files = list(Config.REPORTS_DIRECTORY.glob(f"postmortem_{test_id}_*"))
-        assert len(report_files) >= 2
-        for report_file in report_files:
-            report_file.unlink()
-    else:
-        result = tool._run(investigation_id=test_id, content=content)
-        assert "successfully" in result.lower()
-        report_files = list(Config.REPORTS_DIRECTORY.glob(f"postmortem_{test_id}_*"))
-        assert len(report_files) > 0
-        report_content = report_files[0].read_text()
-        assert test_id in report_content
-        if report_case.get("check_metadata"):
-            assert "---" in report_content
-            assert f"Investigation ID: {test_id}" in report_content
-            assert "Generated:" in report_content
-        for report_file in report_files:
-            report_file.unlink()
-
-
-@pytest.mark.parametrize(
     "interop_case",
     [
         {
-            "type": "log_report",
+            "type": "log_analysis",
             "service_name": "payment-service",
             "timestamp": "2026-01-23T14:00:00",
         },
-        {"type": "git_report", "max_commits": 3},
+        {"type": "git_search", "max_commits": 3},
     ],
 )
 def test_tools_interoperability(interop_case):
     """Clubbed test for tool interoperability workflows."""
-    if interop_case["type"] == "log_report":
+    if interop_case["type"] == "log_analysis":
         log_tool = LogParserTool()
         log_result = log_tool._run(
             service_name=interop_case["service_name"],
             timestamp=interop_case["timestamp"],
         )
-        report_tool = ReportGeneratorTool()
-        report_content = f"""
-# Post-Mortem Report
-
-## Log Analysis
-{log_result}
-
-## Conclusion
-Based on log analysis above.
-"""
-        test_id = "workflow-test-001"
-        report_result = report_tool._run(
-            investigation_id=test_id, content=report_content
-        )
-        assert "successfully" in report_result.lower()
-        report_files = list(Config.REPORTS_DIRECTORY.glob(f"postmortem_{test_id}_*"))
-        if report_files:
-            content = report_files[0].read_text()
-            assert "Log Analysis" in content
-            for report_file in report_files:
-                report_file.unlink()
-    elif interop_case["type"] == "git_report":
+        # Verify log analysis result contains expected content
+        assert "Log Analysis" in log_result or "Error" in log_result
+    elif interop_case["type"] == "git_search":
         git_tool = GitSearchTool()
         git_result = git_tool._run(
             git_repo_path=str(Config.GIT_REPO_PATH),
             timestamp="2026-01-24T00:00:00",
             max_commits=interop_case["max_commits"],
         )
-        report_tool = ReportGeneratorTool()
-        report_content = f"""
-# Post-Mortem Report
-
-## Git Commits
-{git_result}
-
-## Analysis
-Recent commits analyzed.
-"""
-        test_id = "workflow-test-002"
-        report_result = report_tool._run(
-            investigation_id=test_id, content=report_content
-        )
-        assert "successfully" in report_result.lower()
-        report_files = list(Config.REPORTS_DIRECTORY.glob(f"postmortem_{test_id}_*"))
-        for report_file in report_files:
-            report_file.unlink()
+        # Verify git search result
+        assert git_result is not None

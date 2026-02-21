@@ -37,6 +37,9 @@ incident_commander:
     Synthesize findings from log analysis and code history into a clear, actionable 
     post-mortem report with root cause analysis, impact assessment, and remediation 
     steps. Create documentation that both engineers and stakeholders can understand.
+    
+    IMPORTANT: Always output raw markdown without wrapping in code blocks. 
+    Do NOT use ```markdown or ``` markers. Start output directly with markdown content.
   backstory: >
     You've managed hundreds of production incidents across different systems and teams. 
     You know how to take complex technical findings and translate them into clear action 

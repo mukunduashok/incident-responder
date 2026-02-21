@@ -8,11 +8,15 @@ requires-python = ">=3.12"
 dependencies = [
     "crewai[azure-ai-inference]>=1.8.1",
     "crewai-tools>=1.8.1",
+    "litellm>=1.75.3",
+    "email-validator>=2.0.0",
+    "apscheduler>=3.11.2",
     "fastapi>=0.128.0",
     "python-dotenv>=1.1.1,<1.2.dev0",
     "uvicorn>=0.40.0",
     "psycopg2-binary>=2.9.11",
     "qdrant-client[fastembed]>=1.16.2",
+    "fastapi-sso>=0.17.0",
 ]
 
 [dependency-groups]

@@ -64,7 +64,7 @@ def main():
     print(f"📁 Log Directory: {Config.LOG_DIRECTORY}")
     print(f"📄 Reports Directory: {Config.REPORTS_DIRECTORY}")
     print(f"🔧 Git Repo Path: {Config.GIT_REPO_PATH}")
-    print(f"🤖 LLM Model: {Config.AZURE_DEPLOYMENT_NAME}")
+    print(f"🤖 LLM Model: {Config.OLLAMA_MODEL}")
     print(f"\n📚 API Documentation: http://{Config.API_HOST}:{Config.API_PORT}/docs")
 
     uvicorn.run(app, host=Config.API_HOST, port=Config.API_PORT, log_level="info")

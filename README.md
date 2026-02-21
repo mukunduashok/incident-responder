@@ -47,7 +47,7 @@ incident-responder/
 │   ├── tools/
 │   │   ├── log_parser_tool.py   # Custom regex log parser
 │   │   ├── git_search_tool.py   # Git commit search
-│   │   └── report_generator_tool.py
+│   │   └── report_generator_tool.py  # Report generation (via CrewAI output_file)
 │   ├── api/
 │   │   ├── routes.py            # FastAPI endpoints
 │   │   └── models.py            # Pydantic models
