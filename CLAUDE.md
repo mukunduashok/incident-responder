@@ -64,7 +64,6 @@ make clean          # Remove cache files
 | `src/incident_responder/api/routes.py` | FastAPI endpoints |
 | `src/incident_responder/tools/log_parser_tool.py` | Regex-based log parser |
 | `src/incident_responder/tools/git_search_tool.py` | Git commit search |
-| `src/incident_responder/tools/report_generator_tool.py` | Removed (using CrewAI output_file) |
 | `src/incident_responder/utils/config.py` | Configuration singleton |
 | `main.py` | Application entry point |
 
