@@ -41,7 +41,9 @@ class Config:
 
     # Local Ollama Settings (for embeddings)
     EMBEDDING_MODEL: str = os.getenv(ENV_EMBEDDING_MODEL, DEFAULT_EMBEDDING_MODEL)
-    EMBEDDING_BASE_URL: str = os.getenv(ENV_EMBEDDING_BASE_URL, DEFAULT_EMBEDDING_BASE_URL)
+    EMBEDDING_BASE_URL: str = os.getenv(
+        ENV_EMBEDDING_BASE_URL, DEFAULT_EMBEDDING_BASE_URL
+    )
 
     # Paths
     BASE_DIR: Path = Path(__file__).parent.parent.parent.parent
