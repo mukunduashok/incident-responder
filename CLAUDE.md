@@ -8,7 +8,10 @@ This is an **Intelligent DevOps Multi-Agent System** that automatically investig
 
 ## Common Commands
 
+> **Use `make` for all standard operations. Use `uv` for package management.**
+
 ### Running the Application
+
 ```bash
 python main.py
 # or
@@ -16,6 +19,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### Testing
+
 ```bash
 pytest                                    # All tests
 pytest tests/unit -v                      # Unit tests only
@@ -25,6 +29,7 @@ pytest -k "test_log_parser"               # Pattern matching
 ```
 
 ### Code Quality
+
 ```bash
 make format    # Format with ruff
 make lint      # Lint with ruff
@@ -32,6 +37,7 @@ make check     # Format + lint check
 ```
 
 ### Using Make
+
 ```bash
 make install        # Install deps (uv sync)
 make install-dev    # Install all deps including dev/test
@@ -70,6 +76,7 @@ make clean          # Remove cache files
 ## Configuration
 
 Environment variables (in `.env`):
+
 - `LLM_PROVIDER` - LLM provider: "azure" or "ollama" (default: "azure")
 - `OLLAMA_MODEL` - Ollama model (default: `qwen3:14b`)
 - `OLLAMA_BASE_URL` - Ollama server (default: `http://localhost:11434`)
@@ -90,11 +97,13 @@ To use Ollama, set `LLM_PROVIDER=ollama` in `.env` and ensure Ollama is running.
 ## Adding New Agents/Tools
 
 ### Adding a New Tool
+
 1. Create tool class in `src/incident_responder/tools/` extending `BaseTool`
 2. Define Pydantic input schema
 3. Register in `tools/__init__.py`
 
 ### Adding a New Agent
+
 1. Define agent in `config/agents.yaml` with role, goal, backstory
 2. Add agent method in `crew.py` with `@agent` decorator
 3. Create task in `config/tasks.yaml`
@@ -103,6 +112,55 @@ To use Ollama, set `LLM_PROVIDER=ollama` in `.env` and ensure Ollama is running.
 ## Test Validation
 
 Reports must contain these keywords for validation:
+
 - "Error" - describing the issue
 - "Commit" - referencing code changes
 - "Recommendation" - prevention steps
+
+---
+
+## Workflow Instructions
+
+### Task Management
+
+1. **Plan First**: Write plan to `.claude/memory/todo.md` with checkable items (NOT committed to git)
+2. **Verify Plan**: Check in before starting implementation
+3. **Track Progress**: Mark items complete as you go
+4. **Explain Changes**: High-level summary at each step
+5. **Document Results**: Add review section to `.claude/memory/todo.md`
+6. **Capture Lessons**: Update `.claude/memory/lessons.md` after corrections (NOT committed to git)
+
+### Plan Mode
+
+- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
+- If something goes sideways, **STOP** and re-plan immediately — don't keep pushing
+- Use plan mode for verification steps, not just building
+- Write detailed specs upfront to reduce ambiguity
+
+### Subagent Strategy
+
+- Use subagents liberally to keep main context window clean
+- Offload research, exploration, and parallel analysis to subagents
+- For complex problems, throw more compute at it via subagents
+- One task per subagent for focused execution
+
+### Self-Improvement Loop
+
+- After ANY correction from the user: update `.claude/memory/lessons.md` with the pattern
+- Write rules for yourself that prevent the same mistake
+- Ruthlessly iterate on these lessons until mistake rate drops
+- Review lessons at session start for relevant project
+
+### Verification Before Done
+
+- Never mark a task complete without proving it works
+- Diff behavior between main and your changes when relevant
+- Ask yourself: "Would a staff engineer approve this?"
+- Run tests, check logs, demonstrate correctness
+
+### Bug Fixing
+
+- When given a bug report: just fix it. Don't ask for hand-holding
+- Point at logs, errors, failing tests — then resolve them
+- Zero context switching required from the user
+- Go fix failing CI tests without being told how
