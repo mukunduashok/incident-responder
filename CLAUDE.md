@@ -154,6 +154,8 @@ Reports must contain these keywords for validation:
 ### Verification Before Done
 
 - Never mark a task complete without proving it works
+- Run linter (`make lint` or `ruff check`) after code changes
+- Run tests (`make test` or `pytest`) to verify functionality
 - Diff behavior between main and your changes when relevant
 - Ask yourself: "Would a staff engineer approve this?"
 - Run tests, check logs, demonstrate correctness

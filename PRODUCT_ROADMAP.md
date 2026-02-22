@@ -160,7 +160,7 @@ log_sources:
 
 ## Productization Paths
 
-### Option 1: Python Package
+### Option 1: Python Package (Current Focus)
 
 ```
 pip install incident-responder
@@ -177,8 +177,43 @@ pip install incident-responder
 **Deliverables:**
 - Clean pip-installable package
 - YAML/TOML configuration
-- CLI entry point
+- CLI entry point (primary)
+- FastAPI server (optional, for programmatic access)
 - Docker image
+
+**CLI Usage:**
+
+```bash
+# Option 1: Specific workflow run (recommended)
+incident-responder investigate \
+  --logs github-actions \
+  --repo myorg/myapp \
+  --run-url "https://github.com/myorg/myapp/actions/runs/123456789"
+
+# Option 2: By run ID
+incident-responder investigate \
+  --logs github-actions \
+  --repo myorg/myapp \
+  --run-id 123456789
+
+# Option 3: Time range (for broader investigation)
+incident-responder investigate \
+  --logs github-actions \
+  --repo myorg/myapp \
+  --since "2024-01-01 14:00" \
+  --until "2024-01-01 15:00"
+
+# With local git repo for code history
+incident-responder investigate \
+  --logs github-actions \
+  --repo myorg/myapp \
+  --run-id 123456789 \
+  --git local \
+  --git-path /path/to/repo
+
+# Start optional API server
+incident-responder serve --host 0.0.0.0 --port 8000
+```
 
 ---
 
@@ -208,30 +243,34 @@ pip install incident-responder
 
 ---
 
-## Recommended Roadmap
+## Implementation Priority
 
-### Phase 1: Foundation (Weeks 1-2)
+### Phase 1: CLI + GitHub Actions (Current)
 
-- [ ] Refactor to use source adapter pattern
-- [ ] Implement GitHub adapter
-- [ ] Implement Datadog adapter
-- [ ] Add config-driven source selection
+- [ ] Add CLI entry point with `investigate` command
+- [ ] Add `--logs`, `--repo`, `--since`, `--until` flags
+- [ ] Implement GitHub Actions log source adapter
+- [ ] Support reading from local git repo (already implemented)
+- [ ] Config-driven source selection via `sources.yaml`
 
-### Phase 2: Packaging (Weeks 3-4)
+### Phase 2: Datadog Support
+
+- [ ] Implement Datadog log source adapter
+- [ ] Add Datadog configuration to sources.yaml
+
+### Phase 3: Packaging
 
 - [ ] Clean up package structure for PyPI
-- [ ] Add CLI entry point
 - [ ] Create Docker image
 - [ ] Publish to Test PyPI
 
-### Phase 3: Growth (Weeks 5-8)
+### Phase 4: Additional Sources
 
 - [ ] Add more git sources (GitLab, Bitbucket)
-- [ ] Add more log sources (CloudWatch, ELK)
+- [ ] Add more log sources (CloudWatch, ELK, Jenkins)
 - [ ] Add authentication (API keys)
-- [ ] Documentation and examples
 
-### Phase 4: Scale (If SaaS)
+### Phase 5: Scale (If SaaS)
 
 - [ ] Multi-tenant isolation
 - [ ] OAuth integrations

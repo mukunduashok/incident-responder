@@ -1,0 +1,10 @@
+log_sources:
+- type: local
+  enabled: true
+  config:
+    log_directory: C:\Users\mbash\Documents\incident-responder\data\logs
+git_sources:
+- type: local
+  enabled: true
+  config:
+    repo_path: C:\Users\mbash\Documents\incident-responder\data\mock_repo

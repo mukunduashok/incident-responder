@@ -178,6 +178,27 @@ ENV_API_HOST = "API_HOST"
 ENV_API_PORT = "API_PORT"
 
 # ============================================================================
+# GitHub Configuration
+# ============================================================================
+
+DEFAULT_GITHUB_API_URL = "https://api.github.com"
+GITHUB_API_VERSION = "application/vnd.github.v3+json"
+GITHUB_USER_AGENT = "incident-responder"
+
+# GitHub Actions URL patterns
+GITHUB_ACTIONS_RUN_URL_PATTERN = r"/actions/runs/(\d+)"
+
+# Log source types
+LOG_SOURCE_LOCAL = "local"
+LOG_SOURCE_GITHUB_ACTIONS = "github-actions"
+LOG_SOURCE_DATADOG = "datadog"
+
+# Git source types
+GIT_SOURCE_LOCAL = "local"
+GIT_SOURCE_GITHUB = "github"
+GIT_SOURCE_GITLAB = "gitlab"
+
+# ============================================================================
 # Timezone Configuration
 # ============================================================================
 

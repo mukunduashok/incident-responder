@@ -1,7 +1,7 @@
 [project]
 name = "incident-responder"
 version = "0.1.0"
-description = "Add your description here"
+description = "AI-powered incident investigation tool"
 readme = "README.md"
 requires-python = ">=3.12"
 
@@ -16,7 +16,12 @@ dependencies = [
     "psycopg2-binary>=2.9.11",
     "qdrant-client[fastembed]>=1.16.2",
     "fastapi-sso>=0.17.0",
+    "click>=8.1.0",
+    "requests>=2.31.0",
 ]
+
+[project.scripts]
+incident-responder = "src.incident_responder.cli:main"
 
 [dependency-groups]
 test = [
