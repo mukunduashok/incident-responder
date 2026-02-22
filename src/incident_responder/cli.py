@@ -141,15 +141,23 @@ def investigate(
 
             if run_url or run_id:
                 # Get specific run
-                for entry in gh_source.get_workflow_logs(repo, run_id=run_id, run_url=run_url):
+                for entry in gh_source.get_workflow_logs(
+                    repo, run_id=run_id, run_url=run_url
+                ):
                     log_entries.append(entry)
-                click.echo(f"   Retrieved {len(log_entries)} log entries from workflow run")
+                click.echo(
+                    f"   Retrieved {len(log_entries)} log entries from workflow run"
+                )
             elif since_dt and until_dt:
                 # Get runs in time range
-                for run in gh_source.get_workflow_runs(repo, since=since_dt, until=until_dt):
+                for run in gh_source.get_workflow_runs(
+                    repo, since=since_dt, until=until_dt
+                ):
                     for entry in gh_source.get_workflow_logs(repo, run_id=run.id):
                         log_entries.append(entry)
-                click.echo(f"   Retrieved {len(log_entries)} log entries from time range")
+                click.echo(
+                    f"   Retrieved {len(log_entries)} log entries from time range"
+                )
 
         elif logs == "local":
             log_source = SourceFactory.create_log_source("local")

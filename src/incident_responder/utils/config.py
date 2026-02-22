@@ -108,7 +108,9 @@ class Config:
                 with open(cls.SOURCES_CONFIG_PATH) as f:
                     user_config = yaml.safe_load(f) or {}
                 # Merge with defaults
-                cls._sources_config = cls._merge_sources_config(default_config, user_config)
+                cls._sources_config = cls._merge_sources_config(
+                    default_config, user_config
+                )
             except Exception as e:
                 print(f"Warning: Failed to load sources.yaml: {e}")
                 cls._sources_config = default_config

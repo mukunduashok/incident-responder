@@ -1,20 +1,24 @@
 """Unit tests for source adapters."""
 
 import subprocess
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Iterator
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.incident_responder.sources import GitHubActionsAdapter, LocalGitAdapter, SourceFactory, WorkflowRun
+from src.incident_responder.sources import (
+    GitHubActionsAdapter,
+    LocalGitAdapter,
+    SourceFactory,
+    WorkflowRun,
+)
 from src.incident_responder.sources.local import LocalLogAdapter
-
 
 # ============================================================================
 # Shared Fixtures
 # ============================================================================
+
 
 @pytest.fixture
 def sample_log_content() -> str:
@@ -130,6 +134,7 @@ TEST_DATE_END = datetime(2026, 2, 21, 0, 0, 0)
 # GitHub Actions Adapter Tests
 # ============================================================================
 
+
 class TestGitHubActionsAdapter:
     """Tests for GitHubActionsAdapter class."""
 
@@ -145,27 +150,48 @@ class TestGitHubActionsAdapter:
 
     def test_adapter_with_custom_api_url(self) -> None:
         """Test adapter with custom GitHub Enterprise URL."""
-        adapter = GitHubActionsAdapter(token="test_token", api_url=GITHUB_ENTERPRISE_URL)
+        adapter = GitHubActionsAdapter(
+            token="test_token", api_url=GITHUB_ENTERPRISE_URL
+        )
         assert adapter.api_url == GITHUB_ENTERPRISE_URL
 
-    @pytest.mark.parametrize("url,expected_id", [
-        ("https://github.com/owner/repo/actions/runs/123456789", 123456789),
-        ("https://github.com/owner/repo/actions/runs/123456789/job/987654321", 123456789),
-    ])
-    def test_extract_run_id_from_url(self, adapter: GitHubActionsAdapter, url: str, expected_id: int) -> None:
+    @pytest.mark.parametrize(
+        "url,expected_id",
+        [
+            ("https://github.com/owner/repo/actions/runs/123456789", 123456789),
+            (
+                "https://github.com/owner/repo/actions/runs/123456789/job/987654321",
+                123456789,
+            ),
+        ],
+    )
+    def test_extract_run_id_from_url(
+        self, adapter: GitHubActionsAdapter, url: str, expected_id: int
+    ) -> None:
         """Test extracting run ID from various URL formats."""
         assert adapter._extract_run_id_from_url(url) == expected_id
 
-    def test_extract_run_id_from_url_invalid(self, adapter: GitHubActionsAdapter) -> None:
+    def test_extract_run_id_from_url_invalid(
+        self, adapter: GitHubActionsAdapter
+    ) -> None:
         """Test invalid URL raises ValueError."""
         with pytest.raises(ValueError, match="Invalid GitHub Actions run URL"):
             adapter._extract_run_id_from_url("https://github.com/owner/repo")
 
-    @pytest.mark.parametrize("repo,expected_owner,expected_repo", [
-        ("test-owner/test-repo", "test-owner", "test-repo"),
-        ("owner/repo", "owner", "repo"),
-    ])
-    def test_parse_repo(self, adapter: GitHubActionsAdapter, repo: str, expected_owner: str, expected_repo: str) -> None:
+    @pytest.mark.parametrize(
+        "repo,expected_owner,expected_repo",
+        [
+            ("test-owner/test-repo", "test-owner", "test-repo"),
+            ("owner/repo", "owner", "repo"),
+        ],
+    )
+    def test_parse_repo(
+        self,
+        adapter: GitHubActionsAdapter,
+        repo: str,
+        expected_owner: str,
+        expected_repo: str,
+    ) -> None:
         """Test parsing repository string."""
         owner, repo_name = adapter._parse_repo(repo)
         assert owner == expected_owner
@@ -176,12 +202,18 @@ class TestGitHubActionsAdapter:
         with pytest.raises(ValueError, match="Invalid repo format"):
             adapter._parse_repo("invalid-repo")
 
-    def test_get_workflow_run_requires_id_or_url(self, adapter: GitHubActionsAdapter) -> None:
+    def test_get_workflow_run_requires_id_or_url(
+        self, adapter: GitHubActionsAdapter
+    ) -> None:
         """Test that either run_id or run_url must be provided."""
-        with pytest.raises(ValueError, match="Either run_id or run_url must be provided"):
+        with pytest.raises(
+            ValueError, match="Either run_id or run_url must be provided"
+        ):
             adapter.get_workflow_run(TEST_REPO)
 
-    def test_get_workflow_run_by_id(self, adapter: GitHubActionsAdapter, mock_workflow_run_response: dict) -> None:
+    def test_get_workflow_run_by_id(
+        self, adapter: GitHubActionsAdapter, mock_workflow_run_response: dict
+    ) -> None:
         """Test fetching a specific workflow run by ID."""
         mock_response = MagicMock()
         mock_response.json.return_value = mock_workflow_run_response
@@ -195,7 +227,9 @@ class TestGitHubActionsAdapter:
             assert run.status == "completed"
             assert run.conclusion == "failure"
 
-    def test_get_workflow_run_by_url(self, adapter: GitHubActionsAdapter, mock_workflow_run_response: dict) -> None:
+    def test_get_workflow_run_by_url(
+        self, adapter: GitHubActionsAdapter, mock_workflow_run_response: dict
+    ) -> None:
         """Test fetching workflow run from URL."""
         mock_response = MagicMock()
         mock_response.json.return_value = mock_workflow_run_response
@@ -208,7 +242,12 @@ class TestGitHubActionsAdapter:
 
             assert run.id == TEST_RUN_ID
 
-    def test_get_workflow_logs(self, adapter: GitHubActionsAdapter, mock_workflow_run_response: dict, mock_jobs_response: dict) -> None:
+    def test_get_workflow_logs(
+        self,
+        adapter: GitHubActionsAdapter,
+        mock_workflow_run_response: dict,
+        mock_jobs_response: dict,
+    ) -> None:
         """Test fetching workflow logs returns job and step entries."""
         # Now only 1 API call needed (directly to jobs)
         mock_response = MagicMock()
@@ -222,10 +261,14 @@ class TestGitHubActionsAdapter:
             assert logs[0].level == "ERROR"  # conclusion is failure
             assert logs[0].source == "github-actions"
 
-    def test_get_workflow_runs(self, adapter: GitHubActionsAdapter, mock_workflow_run_response: dict) -> None:
+    def test_get_workflow_runs(
+        self, adapter: GitHubActionsAdapter, mock_workflow_run_response: dict
+    ) -> None:
         """Test fetching workflow runs."""
         mock_response = MagicMock()
-        mock_response.json.return_value = {"workflow_runs": [mock_workflow_run_response]}
+        mock_response.json.return_value = {
+            "workflow_runs": [mock_workflow_run_response]
+        }
         mock_response.links = {}
 
         with patch.object(adapter, "_request", return_value=mock_response):
@@ -239,12 +282,17 @@ class TestGitHubActionsAdapter:
 class TestWorkflowRunDataclass:
     """Tests for WorkflowRun dataclass."""
 
-    @pytest.mark.parametrize("status,conclusion,expected_level", [
-        ("completed", "failure", "ERROR"),
-        ("completed", "success", "INFO"),
-        ("queued", None, "INFO"),
-    ])
-    def test_workflow_run_status_to_level(self, status: str, conclusion: str | None, expected_level: str) -> None:
+    @pytest.mark.parametrize(
+        "status,conclusion,expected_level",
+        [
+            ("completed", "failure", "ERROR"),
+            ("completed", "success", "INFO"),
+            ("queued", None, "INFO"),
+        ],
+    )
+    def test_workflow_run_status_to_level(
+        self, status: str, conclusion: str | None, expected_level: str
+    ) -> None:
         """Test workflow run status maps to appropriate log level."""
         run = WorkflowRun(
             id=1,
@@ -271,6 +319,7 @@ class TestWorkflowRunDataclass:
 # Local Log Adapter Tests
 # ============================================================================
 
+
 class TestLocalLogAdapter:
     """Tests for LocalLogAdapter class."""
 
@@ -284,38 +333,53 @@ class TestLocalLogAdapter:
         adapter = LocalLogAdapter(log_directory=temp_log_dir)
         assert adapter.log_directory == temp_log_dir
 
-    def test_get_logs_returns_entries(self, temp_log_dir: Path, sample_log_content: str) -> None:
+    def test_get_logs_returns_entries(
+        self, temp_log_dir: Path, sample_log_content: str
+    ) -> None:
         """Test fetching logs from a file returns all entries."""
         log_file = temp_log_dir / "test-service.log"
         log_file.write_text(sample_log_content)
 
         adapter = LocalLogAdapter(log_directory=temp_log_dir)
 
-        logs = list(adapter.get_logs("test-service", since=TEST_DATE, until=TEST_DATE_END))
+        logs = list(
+            adapter.get_logs("test-service", since=TEST_DATE, until=TEST_DATE_END)
+        )
 
         assert len(logs) == 6
         assert logs[0].level == "INFO"
         assert logs[2].level == "ERROR"
         assert "Connection failed" in logs[2].message
 
-    @pytest.mark.parametrize("level,expected_count", [
-        ("ERROR", 2),
-        ("INFO", 3),
-        ("WARNING", 1),
-    ])
-    def test_get_logs_filters_by_level(self, temp_log_dir: Path, sample_log_content: str, level: str, expected_count: int) -> None:
+    @pytest.mark.parametrize(
+        "level,expected_count",
+        [
+            ("ERROR", 2),
+            ("INFO", 3),
+            ("WARNING", 1),
+        ],
+    )
+    def test_get_logs_filters_by_level(
+        self,
+        temp_log_dir: Path,
+        sample_log_content: str,
+        level: str,
+        expected_count: int,
+    ) -> None:
         """Test filtering logs by level."""
         log_file = temp_log_dir / "test-service.log"
         log_file.write_text(sample_log_content)
 
         adapter = LocalLogAdapter(log_directory=temp_log_dir)
 
-        filtered_logs = list(adapter.get_logs(
-            "test-service",
-            since=TEST_DATE,
-            until=TEST_DATE_END,
-            level=level,
-        ))
+        filtered_logs = list(
+            adapter.get_logs(
+                "test-service",
+                since=TEST_DATE,
+                until=TEST_DATE_END,
+                level=level,
+            )
+        )
 
         assert len(filtered_logs) == expected_count
         assert all(log.level == level for log in filtered_logs)
@@ -324,18 +388,26 @@ class TestLocalLogAdapter:
         """Test handling of nonexistent log file returns empty."""
         adapter = LocalLogAdapter(log_directory=temp_log_dir)
 
-        logs = list(adapter.get_logs("nonexistent-service", since=TEST_DATE, until=TEST_DATE_END))
+        logs = list(
+            adapter.get_logs(
+                "nonexistent-service", since=TEST_DATE, until=TEST_DATE_END
+            )
+        )
 
         assert len(logs) == 0
 
-    def test_log_entry_has_source(self, temp_log_dir: Path, sample_log_content: str) -> None:
+    def test_log_entry_has_source(
+        self, temp_log_dir: Path, sample_log_content: str
+    ) -> None:
         """Test that log entries have source set to 'local'."""
         log_file = temp_log_dir / "test-service.log"
         log_file.write_text(sample_log_content)
 
         adapter = LocalLogAdapter(log_directory=temp_log_dir)
 
-        logs = list(adapter.get_logs("test-service", since=TEST_DATE, until=TEST_DATE_END))
+        logs = list(
+            adapter.get_logs("test-service", since=TEST_DATE, until=TEST_DATE_END)
+        )
 
         assert all(log.source == "local" for log in logs)
 
@@ -346,7 +418,9 @@ class TestLocalLogAdapter:
 
         adapter = LocalLogAdapter(log_directory=temp_log_dir)
 
-        logs = list(adapter.get_logs("test-service", since=TEST_DATE, until=TEST_DATE_END))
+        logs = list(
+            adapter.get_logs("test-service", since=TEST_DATE, until=TEST_DATE_END)
+        )
 
         assert len(logs) == 0
 
@@ -354,6 +428,7 @@ class TestLocalLogAdapter:
 # ============================================================================
 # Local Git Adapter Tests
 # ============================================================================
+
 
 class TestLocalGitAdapter:
     """Tests for LocalGitAdapter class."""
@@ -400,7 +475,7 @@ class TestLocalGitAdapter:
         adapter = LocalGitAdapter(repo_path=temp_git_dir)
 
         # Get commits from the last hour (should get all)
-        since = datetime.now(timezone.utc) - timedelta(hours=1)
+        since = datetime.now(UTC) - timedelta(hours=1)
 
         commits = list(adapter.get_commits("test/repo", since=since))
 
@@ -411,6 +486,7 @@ class TestLocalGitAdapter:
 # ============================================================================
 # Source Factory Tests
 # ============================================================================
+
 
 class TestSourceFactory:
     """Tests for SourceFactory class."""

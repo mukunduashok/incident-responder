@@ -23,7 +23,9 @@ def _normalize_datetime(dt: datetime) -> datetime:
 # Log format patterns (compiled for performance)
 _LOG_PATTERNS = [
     # ISO format with level: 2024-01-01T14:30:00Z [ERROR] message
-    re.compile(r"(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)\s+\[?(\w+)\]?\s+(.*)"),
+    re.compile(
+        r"(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)\s+\[?(\w+)\]?\s+(.*)"
+    ),
     # Simple format: 2024-01-01 14:30:00 ERROR message
     re.compile(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(\w+)\s+(.*)"),
 ]

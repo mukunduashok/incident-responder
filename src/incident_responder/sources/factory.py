@@ -1,6 +1,5 @@
 """Factory for creating data source adapters."""
 
-
 from ..constants import (
     DEFAULT_GITHUB_API_URL,
     GIT_SOURCE_LOCAL,
